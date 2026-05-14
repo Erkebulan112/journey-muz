@@ -164,27 +164,60 @@
             text-shadow: 0 0 25px #ff0055, 0 0 50px rgba(255,0,85,0.4); 
         }
 
-        /* --- ЛИНИИ С КОМЕТНЫМ СВЕЧЕНИЕМ --- */
-        .path-svg { position: absolute; top: 50px; left: 0; width: 100%; height: 400px; z-index: -1; pointer-events: none; }
-        .main-path { fill: none; stroke: var(--line-color); stroke-width: 1.5; stroke-dasharray: 6; }
-        .progress-path { 
-            fill: none; stroke: var(--line-active); stroke-width: 3; 
-            stroke-dasharray: 1000; stroke-dashoffset: 1000; 
-            transition: stroke-dashoffset 0.1s linear;
-            stroke-linecap: round;
-            filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+        /* Базовый стиль для всех устройств */
+        .path-svg {
+         position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: visible;
         }
 
-        /* Мобильная адаптация */
-        @media (max-width: 600px) {
-            .lyric-word { font-size: 2.2rem; letter-spacing: 1px; }
-            .sphere { width: 75px; height: 75px; }
-            .step { margin-bottom: 220px; }
-            .step:nth-child(odd) .lyric-word { left: 95px; }
-            .step:nth-child(even) .lyric-word { right: 95px; }
-            .step:last-child .sphere { width: 110px; height: 110px; }
-            .step:last-child .lyric-word { left: 135px; }
-        }
+.main-path { 
+    fill: none; 
+    stroke: var(--line-color); 
+    stroke-width: 1.5; 
+    stroke-dasharray: 6; 
+}
+
+.progress-path { 
+    fill: none; 
+    stroke: var(--line-active); 
+    stroke-width: 3; 
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
+    transition: stroke-dashoffset 0.1s linear;
+    will-change: stroke-dashoffset;
+}
+
+/* Настройки для ВЕБА */
+@media (min-width: 601px) {
+    .path-svg {
+        height: 300px;
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 1000px; 
+    }
+}
+
+/* Настройки для МОБИЛКИ */
+@media (max-width: 600px) {
+    .path-svg {
+        height: 220px; /* Соответствует margin-bottom шага */
+    }
+    .path-svg path {
+        vector-effect: non-scaling-stroke;
+    }
+    .lyric-word { font-size: 2.2rem; letter-spacing: 1px; }
+    .sphere { width: 75px; height: 75px; }
+    .step { margin-bottom: 220px; }
+    .step:nth-child(odd) .lyric-word { left: 95px; }
+    .step:nth-child(even) .lyric-word { right: 95px; }
+    .step:last-child .sphere { width: 110px; height: 110px; }
+    .step:last-child .lyric-word { left: 135px; }
+}
     </style>
 </head>
 <body>
@@ -200,37 +233,37 @@
     <div class="step" data-index="1">
         <div class="sphere pulse-hint" onclick="handleSphereClick(1, event)"></div>
         <div class="lyric-word">Senen kein</div>
-        <svg class="path-svg"><path class="main-path" d="M 50 50 Q 500 200 950 400" /><path class="progress-path" id="prog-1" d="M 50 50 Q 500 200 950 400" /></svg>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="main-path" d="M 20 10 Q 80 10 80 90" /><path class="progress-path" d="M 20 10 Q 80 10 80 90" /></svg>
     </div>
 
     <div class="step" data-index="2">
         <div class="sphere" onclick="handleSphereClick(2, event)"></div>
         <div class="lyric-word">Jalğyz gül</div>
-        <svg class="path-svg"><path class="main-path" d="M 950 50 Q 500 200 50 400" /><path class="progress-path" id="prog-2" d="M 950 50 Q 500 200 50 400" /></svg>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="main-path" d="M 80 10 Q 20 10 20 90" /><path class="progress-path" d="M 80 10 Q 20 10 20 90" /></svg>
     </div>
 
     <div class="step" data-index="3">
         <div class="sphere" onclick="handleSphereClick(3, event)"></div>
         <div class="lyric-word">Bır oilap alam</div>
-        <svg class="path-svg"><path class="main-path" d="M 50 50 Q 500 200 950 400" /><path class="progress-path" id="prog-3" d="M 50 50 Q 500 200 950 400" /></svg>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="main-path" d="M 20 10 Q 80 10 80 90" /><path class="progress-path" d="M 20 10 Q 80 10 80 90" /></svg>
     </div>
 
     <div class="step" data-index="4">
         <div class="sphere" onclick="handleSphereClick(4, event)"></div>
         <div class="lyric-word">Sheksizdiktei...</div>
-        <svg class="path-svg"><path class="main-path" d="M 950 50 Q 500 200 50 400" /><path class="progress-path" id="prog-4" d="M 950 50 Q 500 200 50 400" /></svg>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="main-path" d="M 80 10 Q 20 10 20 90" /><path class="progress-path" d="M 80 10 Q 20 10 20 90" /></svg>
     </div>
 
     <div class="step" data-index="5">
         <div class="sphere" onclick="handleSphereClick(5, event)"></div>
         <div class="lyric-word">Menı küt</div>
-        <svg class="path-svg"><path d="M 50 50 Q 500 200 950 400" class="main-path"/><path d="M 50 50 Q 500 200 950 400" class="progress-path" id="prog-5"/></svg>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="main-path" d="M 20 10 Q 80 10 80 90" /><path class="progress-path" d="M 20 10 Q 80 10 80 90" /></svg>
     </div>
 
     <div class="step" data-index="6">
         <div class="sphere" onclick="handleSphereClick(6, event)"></div>
         <div class="lyric-word">Jalğyz jūldyz</div>
-        <svg class="path-svg"><path class="main-path" d="M 950 50 Q 500 200 50 400" /><path class="progress-path" id="prog-6" d="M 950 50 Q 500 200 50 400" /></svg>
+        <svg class="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path class="main-path" d="M 80 10 Q 20 10 20 90" /><path class="progress-path" d="M 80 10 Q 20 10 20 90" /></svg>
     </div>
 
     <div class="step" data-index="7">
@@ -242,123 +275,128 @@
 <audio id="core-player"></audio>
 
 <script>
-    // Задний фон звезд
-    function createStars() {
-        const l1 = document.getElementById('stars1'), l2 = document.getElementById('stars2');
-        let s1 = "", s2 = "";
-        for(let i=0; i<350; i++) s1 += `${Math.random()*2000}px ${Math.random()*2000}px rgba(255,255,255,${0.08+Math.random()*0.3})${i<349?', ':''}`;
-        for(let i=0; i<120; i++) s2 += `${Math.random()*2000}px ${Math.random()*2000}px rgba(255,255,255,${0.2+Math.random()*0.4})${i<119?', ':''}`;
-        l1.style.boxShadow = s1; l2.style.boxShadow = s2;
-    }
-    createStars();
+    // 1. Инициализация звездного фона
+function createStars() {
+    const l1 = document.getElementById('stars1'), l2 = document.getElementById('stars2');
+    let s1 = "", s2 = "";
+    for(let i=0; i<350; i++) s1 += `${Math.random()*2000}px ${Math.random()*2000}px rgba(255,255,255,${0.08+Math.random()*0.3})${i<349?', ':''}`;
+    for(let i=0; i<120; i++) s2 += `${Math.random()*2000}px ${Math.random()*2000}px rgba(255,255,255,${0.2+Math.random()*0.4})${i<119?', ':''}`;
+    l1.style.boxShadow = s1; l2.style.boxShadow = s2;
+}
+createStars();
 
-    // ЭФФЕКТ ВЗРЫВА ЧАСТИЦ (Particle Explosion)
-    function explodeParticles(x, y, isFinal = false) {
-        const container = document.getElementById('particle-container');
-        const particleCount = isFinal ? 60 : 35; // Финальная сфера взрывается сильнее
+// 2. Эффект взрыва частиц
+function explodeParticles(x, y, isFinal = false) {
+    const container = document.getElementById('particle-container');
+    const particleCount = isFinal ? 60 : 35;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
         
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            // Если сфера финальная — частицы багрово-красные, иначе — белые космические
-            if (isFinal) {
-                particle.style.background = `hsl(${340 + Math.random() * 20}, 100%, 60%)`;
-                particle.style.boxShadow = '0 0 10px #ff0055';
-            } else {
-                particle.style.background = '#ffffff';
-            }
-            
-            // Случайный размер частиц
-            const size = Math.random() * 4 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            
-            // Стартовая точка — центр кликнутой сферы
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            
-            container.appendChild(particle);
-            
-            // Направление взрыва (360 градусов)
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 120 + 40; // Скорость полета
-            
-            const destinationX = Math.cos(angle) * velocity;
-            const destinationY = Math.sin(angle) * velocity;
-            
-            // Анимация полета через Web Animations API
-            const animation = particle.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${destinationX}px, ${destinationY}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: Math.random() * 600 + 600, // Время жизни частицы
-                easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
-            });
-            
-            animation.onfinish = () => particle.remove();
-        }
-    }
-
-    const player = document.getElementById('core-player');
-    let currentTrack = 0;
-
-    function handleSphereClick(index, event) {
-        // Убираем подсказку-пульсацию с первой сферы при клике
-        if(index === 1) {
-            const firstSphere = document.querySelector('.sphere');
-            if(firstSphere) firstSphere.classList.remove('pulse-hint');
-        }
-
-        // Вычисляем координаты центра сферы для взрыва
-        const rect = event.target.getBoundingClientRect();
-        const centerX = rect.left + window.scrollX + rect.width / 2;
-        const centerY = rect.top + window.scrollY + rect.height / 2;
-        
-        // Триггерим взрыв частиц
-        explodeParticles(centerX, centerY, index === 7);
-
-        if (currentTrack === index) {
-            if (player.paused) {
-                player.play();
-                document.querySelector(`.step[data-index="${index}"]`).classList.remove('paused');
-            } else {
-                player.pause();
-                document.querySelector(`.step[data-index="${index}"]`).classList.add('paused');
-            }
+        if (isFinal) {
+            particle.style.background = `hsl(${340 + Math.random() * 20}, 100%, 60%)`;
+            particle.style.boxShadow = '0 0 10px #ff0055';
         } else {
-            startPlay(index);
+            particle.style.background = '#ffffff';
+        }
+        
+        const size = Math.random() * 4 + 2;
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        container.appendChild(particle);
+        
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 120 + 40;
+        const destinationX = Math.cos(angle) * velocity;
+        const destinationY = Math.sin(angle) * velocity;
+        
+        const animation = particle.animate([
+            { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+            { transform: `translate(${destinationX}px, ${destinationY}px) scale(0)`, opacity: 0 }
+        ], {
+            duration: Math.random() * 600 + 600,
+            easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+        });
+        
+        animation.onfinish = () => particle.remove();
+    }
+}
+
+// 3. Логика плеера и анимации линий
+const player = document.getElementById('core-player');
+let currentTrack = 0;
+
+function startPlay(index) {
+    currentTrack = index;
+    
+    // Сбрасываем классы у всех шагов
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'paused'));
+
+    const currentStep = document.querySelector(`.step[data-index="${index}"]`);
+    if (currentStep) {
+        currentStep.classList.add('active');
+        currentStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Подготавливаем линию: измеряем её реальную длину
+        const progLine = currentStep.querySelector('.progress-path');
+        if (progLine) {
+            const length = progLine.getTotalLength();
+            progLine.style.strokeDasharray = length;
+            progLine.style.strokeDashoffset = length;
         }
     }
 
-    function startPlay(index) {
-        currentTrack = index;
-        document.querySelectorAll('.step').forEach(s => s.classList.remove('active', 'paused'));
-        document.querySelectorAll('.progress-path').forEach(p => p.style.strokeDashoffset = '1000');
+    player.src = `audio/track${index}.mp3`;
+    player.play().catch(e => console.log("Ожидание взаимодействия пользователя"));
+}
 
-        const currentStep = document.querySelector(`.step[data-index="${index}"]`);
-        if (currentStep) {
-            currentStep.classList.add('active');
-            currentStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-
-        player.src = `audio/track${index}.mp3`;
-        player.play();
+function handleSphereClick(index, event) {
+    if(index === 1) {
+        const firstSphere = document.querySelector('.sphere');
+        if(firstSphere) firstSphere.classList.remove('pulse-hint');
     }
 
-    player.ontimeupdate = function() {
-        if (currentTrack < 7) {
-            const progLine = document.getElementById(`prog-${currentTrack}`);
-            if (progLine && player.duration) {
-                const percent = player.currentTime / player.duration;
-                progLine.style.strokeDashoffset = 1000 - (percent * 1000);
-            }
-        }
-    };
+    const rect = event.target.getBoundingClientRect();
+    const centerX = rect.left + window.scrollX + rect.width / 2;
+    const centerY = rect.top + window.scrollY + rect.height / 2;
+    
+    explodeParticles(centerX, centerY, index === 7);
 
-    player.onended = function() {
-        if (currentTrack < 7) startPlay(currentTrack + 1);
-    };
+    if (currentTrack === index) {
+        if (player.paused) {
+            player.play();
+            document.querySelector(`.step[data-index="${index}"]`).classList.remove('paused');
+        } else {
+            player.pause();
+            document.querySelector(`.step[data-index="${index}"]`).classList.add('paused');
+        }
+    } else {
+        startPlay(index);
+    }
+}
+
+// Обновление прогресса линии (динамический расчет)
+player.ontimeupdate = function() {
+    if (currentTrack > 0 && currentTrack < 7) {
+        const currentStep = document.querySelector(`.step[data-index="${currentTrack}"]`);
+        const progLine = currentStep ? currentStep.querySelector('.progress-path') : null;
+        
+        if (progLine && player.duration) {
+            const length = progLine.getTotalLength(); 
+            const percent = player.currentTime / player.duration;
+            progLine.style.strokeDasharray = length;
+            progLine.style.strokeDashoffset = length - (percent * length);
+        }
+    }
+};
+
+player.onended = function() {
+    if (currentTrack < 7) startPlay(currentTrack + 1);
+};
 </script>
 </body>
 </html>
