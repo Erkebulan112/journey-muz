@@ -3,191 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Journey — Final Version</title>
+    <meta property="og:title" content="Sheksizdik">
+    <meta property="og:description" content="Sheksizdik olshenbeidi">
+    <meta property="og:image" content="Sheksizdik.jpg">
+    <meta property="og:type" content="website">
+    <title>Sheksiz alem</title>
+    <link rel="preload" href="audio/track1.mp3" as="audio">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💫</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --line-color: rgba(255, 255, 255, 0.2);
-            --line-active: rgba(255, 255, 255, 0.9);
-            --sphere-border: rgba(255, 255, 255, 0.9);
+            --line-color: rgba(255, 255, 255, 0.12);
+            --line-active: rgba(255, 255, 255, 0.85);
+            --sphere-border: rgba(255, 255, 255, 0.4);
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(180deg, #87CEEB 0%, #fd5e53 45%, #1a1a2e 85%, #000 100%);
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            transition: background 1.5s ease;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: black; overflow-x: hidden; scroll-behavior: smooth;
+            animation: fadeInPage 2s ease-in-out;
         }
 
-        body.final-active { background: #000 !important; }
+        /* Star background */
+        .stars-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .stars1 { width: 1.5px; height: 1.5px; background: transparent; animation: fallStars 80s linear infinite, twinkle 4s infinite ease-in-out; }
+        .stars2 { width: 2.5px; height: 2.5px; background: transparent; animation: fallStars 140s linear infinite, twinkle 6s infinite ease-in-out; }
+        .stars1::after, .stars2::after { content: " "; position: absolute; top: 2000px; width: inherit; height: inherit; background: transparent; box-shadow: inherit; }
 
-        .roadmap { position: relative; max-width: 1000px; margin: 0 auto; padding: 150px 20px; }
+        @keyframes fallStars { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
+        @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Контейнер для эффекта взрыва частиц */
+        #particle-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; pointer-events: none;
+        }
+        .particle {
+            position: absolute; background: white; border-radius: 50%;
+            pointer-events: none; opacity: 1;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .roadmap { position: relative; max-width: 1000px; margin: 0 auto; padding: 150px 20px; z-index: 1; }
 
         .step {
-            position: relative; display: flex; align-items: center;
-            width: 100%; height: 100px; margin-bottom: 300px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            height: 100px;
+            margin-bottom: 300px;
         }
 
         .step:nth-child(odd) { justify-content: flex-start; }
         .step:nth-child(even) { justify-content: flex-end; }
 
-        .lyric-word {
-            font-family: 'Caveat', cursive; font-size: 3.8rem; color: #fff;
-            text-shadow: 2px 4px 15px rgba(0,0,0,0.4); pointer-events: none;
-            white-space: nowrap; opacity: 0.6; transition: all 0.8s ease;
-        }
-
-        /* Активное состояние */
-        .step.active .lyric-word { opacity: 1; transform: scale(1.15) rotate(0deg) !important; }
-
-        /* Бледность при паузе ТОЛЬКО для первых 6 песен */
-        .step.paused:not(:last-child) .lyric-word { opacity: 0.8; transform: scale(1) rotate(0deg) !important; }
-
-        /* Последняя песня всегда яркая, если активна */
-        .step:last-child.active .lyric-word { 
-            opacity: 1 !important; 
-            color: #ff0055; 
-            text-shadow: 0 0 30px rgba(255, 0, 85, 0.8);
-            transform: scale(1.2) rotate(0deg) !important;
-        }
-
-        .step:nth-child(odd) .lyric-word { margin-left: 40px; transform: rotate(-3deg); }
-        .step:nth-child(even) .lyric-word { margin-right: 40px; transform: rotate(3deg); order: -1; }
-
+        /* --- СФЕРЫ --- */
         .sphere {
-            width: 95px; height: 95px; background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(8px); border: 3px solid var(--sphere-border);
-            border-radius: 50%; cursor: pointer; transition: all 0.5s ease;
-            z-index: 10; flex-shrink: 0; box-shadow: 0 0 15px rgba(255,255,255,0.1);
+            width: 95px; height: 95px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(5px);
+            border: 2px solid var(--sphere-border);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            flex-shrink: 0;
+            z-index: 10;
         }
 
-        /* Пульсация при игре */
+        /* Ховер-эффект для десктопов */
+        @media (hover: hover) {
+            .sphere:hover {
+                transform: scale(1.08);
+                border-color: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        /* Инстинктивная подсказка для первой сферы (мягкое дыхание до клика) */
+        .pulse-hint {
+            animation: first-sphere-pulse 2s infinite ease-in-out;
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+        @keyframes first-sphere-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+            50% { transform: scale(1.06); box-shadow: 0 0 25px rgba(255,255,255,0.5); border-color: #fff; }
+        }
+
+        /* --- ЭНЕРГЕТИЧЕСКОЕ ЯДРО (АКТИВНАЯ СФЕРА) --- */
         .step.active:not(.paused) .sphere {
-            animation: active-pulse 2s infinite ease-in-out;
-            background: rgba(255, 255, 255, 0.25);
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.05) 65%);
+            border-color: #ffffff;
+            animation: active-energy-glow 2s infinite ease-in-out;
+        }
+        @keyframes active-energy-glow {
+            0%, 100% { box-shadow: 0 0 25px rgba(255,255,255,0.4), inset 0 0 10px rgba(255,255,255,0.2); transform: scale(1.1); }
+            50% { box-shadow: 0 0 50px rgba(255,255,255,0.7), inset 0 0 20px rgba(255,255,255,0.5); transform: scale(1.15); }
         }
 
-        @keyframes active-pulse {
-            0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); transform: scale(1.2); }
-            50% { box-shadow: 0 0 60px rgba(255,255,255,0.6); transform: scale(1.25); }
+        /* Состояние паузы (сфера затухает, но сохраняет форму) */
+        .step.paused .sphere {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
         }
 
-        /* Стили финальной сферы */
+        /* --- СТИЛЬ ТЕКСТА --- */
+        .lyric-word {
+            position: absolute;
+            font-family: 'Caveat', cursive;
+            font-size: 3.6rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.35);
+            text-shadow: 0 0 10px rgba(255,255,255,0.1);
+            pointer-events: none;
+            white-space: nowrap;
+            top: 50%;
+            opacity: 0.4;
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .step:nth-child(odd) .lyric-word { left: 130px; transform: translateY(-50%) translateX(-15px); }
+        .step:nth-child(even) .lyric-word { right: 130px; text-align: right; transform: translateY(-50%) translateX(15px); }
+
+        .step.active .lyric-word { 
+            color: #ffffff; 
+            text-shadow: 0 0 15px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.2); 
+            transform: translateY(-50%) translateX(0) scale(1.05) !important; 
+            opacity: 1;
+        }
+
+        .step.paused:not(:last-child) .lyric-word { 
+            color: rgba(255, 255, 255, 0.6); 
+            transform: translateY(-50%) translateX(0) scale(1) !important; 
+            opacity: 0.7;
+        }
+
+        /* --- ОСОБЕННАЯ ФИНАЛЬНАЯ СФЕРА --- */
         .step:last-child .sphere { 
-            width: 150px; height: 150px; 
-            background: radial-gradient(circle, #ff0055, #440022); 
-            border: none;
-            box-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
+            width: 140px; height: 140px; 
+            background: radial-gradient(circle, rgba(163,0,54,0.15), rgba(0,0,0,0.8)); 
+            border: 2px solid rgba(163, 0, 54, 0.4); 
+            box-shadow: 0 0 25px rgba(163,0,54,0.2); 
         }
+        .step:last-child .lyric-word { left: 180px; }
         
-        /* Финальная сфера не бледнеет и пульсирует мощнее */
-        .step:last-child.active .sphere {
-            animation: final-pulse 3s infinite ease-in-out !important;
+        .step:last-child.active:not(.paused) .sphere {
+            background: radial-gradient(circle, #ff0055 0%, rgba(163,0,54,0.1) 70%);
+            border-color: #ff0055;
+            animation: final-glow 2.5s infinite ease-in-out;
+        }
+        @keyframes final-glow {
+            0%, 100% { box-shadow: 0 0 30px rgba(255,0,85,0.5), inset 0 0 15px rgba(255,0,85,0.3); transform: scale(1.08); }
+            50% { box-shadow: 0 0 60px rgba(255,0,85,0.8), inset 0 0 25px rgba(255,0,85,0.6); transform: scale(1.12); }
+        }
+        .step:last-child.active .lyric-word { 
+            color: #ff0055; 
+            text-shadow: 0 0 25px #ff0055, 0 0 50px rgba(255,0,85,0.4); 
         }
 
-        @keyframes final-pulse {
-            0%, 100% { box-shadow: 0 0 30px #ff0055; transform: scale(1); }
-            50% { box-shadow: 0 0 80px #ff0055; transform: scale(1.1); }
+        /* --- ЛИНИИ С КОМЕТНЫМ СВЕЧЕНИЕМ --- */
+        .path-svg { position: absolute; top: 50px; left: 0; width: 100%; height: 400px; z-index: -1; pointer-events: none; }
+        .main-path { fill: none; stroke: var(--line-color); stroke-width: 1.5; stroke-dasharray: 6; }
+        .progress-path { 
+            fill: none; stroke: var(--line-active); stroke-width: 3; 
+            stroke-dasharray: 1000; stroke-dashoffset: 1000; 
+            transition: stroke-dashoffset 0.1s linear;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 6px rgba(255,255,255,0.6));
         }
 
-        .path-svg { position: absolute; top: 50px; left: 0; width: 100%; height: 400px; z-index: 1; pointer-events: none; }
-        .main-path { fill: none; stroke: var(--line-color); stroke-width: 3; stroke-dasharray: 12; }
-        .progress-path { fill: none; stroke: var(--line-active); stroke-width: 4; stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 0.1s linear; }
-
+        /* Мобильная адаптация */
         @media (max-width: 600px) {
-            .lyric-word {
-                font-size: 2.2rem; 
-                margin: 0 20px !important;
-            }
-    
-            .sphere {
-                width: 70px;
-                height: 70px;
-            }
-
-            .step {
-                margin-bottom: 200px;   
-            }
-
-            .step:last-child .sphere {
-                width: 110px;
-                height: 110px;
-            }
+            .lyric-word { font-size: 2.2rem; letter-spacing: 1px; }
+            .sphere { width: 75px; height: 75px; }
+            .step { margin-bottom: 220px; }
+            .step:nth-child(odd) .lyric-word { left: 95px; }
+            .step:nth-child(even) .lyric-word { right: 95px; }
+            .step:last-child .sphere { width: 110px; height: 110px; }
+            .step:last-child .lyric-word { left: 135px; }
         }
     </style>
 </head>
 <body>
 
-<div class="roadmap" id="roadmap">
+<div class="stars-background">
+    <div class="stars1" id="stars1"></div>
+    <div class="stars2" id="stars2"></div>
+</div>
+
+<div id="particle-container"></div>
+
+<div class="roadmap">
     <div class="step" data-index="1">
-        <div class="sphere" onclick="handleSphereClick(1)"></div>
+        <div class="sphere pulse-hint" onclick="handleSphereClick(1, event)"></div>
         <div class="lyric-word">Senen kein</div>
-        <svg class="path-svg">
-            <path class="main-path" d="M 50 50 Q 500 200 950 400" />
-            <path class="progress-path" id="prog-1" d="M 50 50 Q 500 200 950 400" />
-        </svg>
+        <svg class="path-svg"><path class="main-path" d="M 50 50 Q 500 200 950 400" /><path class="progress-path" id="prog-1" d="M 50 50 Q 500 200 950 400" /></svg>
     </div>
 
     <div class="step" data-index="2">
-        <div class="sphere" onclick="handleSphereClick(2)"></div>
+        <div class="sphere" onclick="handleSphereClick(2, event)"></div>
         <div class="lyric-word">Jalğyz gül</div>
-        <svg class="path-svg">
-            <path class="main-path" d="M 950 50 Q 500 200 50 400" />
-            <path class="progress-path" id="prog-2" d="M 950 50 Q 500 200 50 400" />
-        </svg>
+        <svg class="path-svg"><path class="main-path" d="M 950 50 Q 500 200 50 400" /><path class="progress-path" id="prog-2" d="M 950 50 Q 500 200 50 400" /></svg>
     </div>
 
     <div class="step" data-index="3">
-        <div class="sphere" onclick="handleSphereClick(3)"></div>
+        <div class="sphere" onclick="handleSphereClick(3, event)"></div>
         <div class="lyric-word">Bır oilap alam</div>
-        <svg class="path-svg">
-            <path class="main-path" d="M 50 50 Q 500 200 950 400" />
-            <path class="progress-path" id="prog-3" d="M 50 50 Q 500 200 950 400" />
-        </svg>
+        <svg class="path-svg"><path class="main-path" d="M 50 50 Q 500 200 950 400" /><path class="progress-path" id="prog-3" d="M 50 50 Q 500 200 950 400" /></svg>
     </div>
 
     <div class="step" data-index="4">
-        <div class="sphere" onclick="handleSphereClick(4)"></div>
+        <div class="sphere" onclick="handleSphereClick(4, event)"></div>
         <div class="lyric-word">Sheksizdiktei...</div>
-        <svg class="path-svg">
-            <path class="main-path" d="M 950 50 Q 500 200 50 400" />
-            <path class="progress-path" id="prog-4" d="M 950 50 Q 500 200 50 400" />
-        </svg>
+        <svg class="path-svg"><path class="main-path" d="M 950 50 Q 500 200 50 400" /><path class="progress-path" id="prog-4" d="M 950 50 Q 500 200 50 400" /></svg>
     </div>
 
     <div class="step" data-index="5">
-        <div class="sphere" onclick="handleSphereClick(5)"></div>
+        <div class="sphere" onclick="handleSphereClick(5, event)"></div>
         <div class="lyric-word">Menı küt</div>
-        <svg class="path-svg">
-            <path class="main-path" d="M 50 50 Q 500 200 950 400" />
-            <path class="progress-path" id="prog-5" d="M 50 50 Q 500 200 950 400" />
-        </svg>
+        <svg class="path-svg"><path d="M 50 50 Q 500 200 950 400" class="main-path"/><path d="M 50 50 Q 500 200 950 400" class="progress-path" id="prog-5"/></svg>
     </div>
 
     <div class="step" data-index="6">
-        <div class="sphere" onclick="handleSphereClick(6)"></div>
+        <div class="sphere" onclick="handleSphereClick(6, event)"></div>
         <div class="lyric-word">Jalğyz jūldyz</div>
-        <svg class="path-svg">
-            <path class="main-path" d="M 950 50 Q 500 200 50 400" />
-            <path class="progress-path" id="prog-6" d="M 950 50 Q 500 200 50 400" />
-        </svg>
+        <svg class="path-svg"><path class="main-path" d="M 950 50 Q 500 200 50 400" /><path class="progress-path" id="prog-6" d="M 950 50 Q 500 200 50 400" /></svg>
     </div>
 
     <div class="step" data-index="7">
-        <div class="sphere" onclick="handleSphereClick(7)"></div>
-        <div class="lyric-word">Mangi</div>
+        <div class="sphere" onclick="handleSphereClick(7, event)"></div>
+        <div class="lyric-word">Sen bılesıñ</div>
     </div>
 </div>
 
 <audio id="core-player"></audio>
 
 <script>
+    // Задний фон звезд
+    function createStars() {
+        const l1 = document.getElementById('stars1'), l2 = document.getElementById('stars2');
+        let s1 = "", s2 = "";
+        for(let i=0; i<350; i++) s1 += `${Math.random()*2000}px ${Math.random()*2000}px rgba(255,255,255,${0.08+Math.random()*0.3})${i<349?', ':''}`;
+        for(let i=0; i<120; i++) s2 += `${Math.random()*2000}px ${Math.random()*2000}px rgba(255,255,255,${0.2+Math.random()*0.4})${i<119?', ':''}`;
+        l1.style.boxShadow = s1; l2.style.boxShadow = s2;
+    }
+    createStars();
+
+    // ЭФФЕКТ ВЗРЫВА ЧАСТИЦ (Particle Explosion)
+    function explodeParticles(x, y, isFinal = false) {
+        const container = document.getElementById('particle-container');
+        const particleCount = isFinal ? 60 : 35; // Финальная сфера взрывается сильнее
+        
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Если сфера финальная — частицы багрово-красные, иначе — белые космические
+            if (isFinal) {
+                particle.style.background = `hsl(${340 + Math.random() * 20}, 100%, 60%)`;
+                particle.style.boxShadow = '0 0 10px #ff0055';
+            } else {
+                particle.style.background = '#ffffff';
+            }
+            
+            // Случайный размер частиц
+            const size = Math.random() * 4 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            
+            // Стартовая точка — центр кликнутой сферы
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            container.appendChild(particle);
+            
+            // Направление взрыва (360 градусов)
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 120 + 40; // Скорость полета
+            
+            const destinationX = Math.cos(angle) * velocity;
+            const destinationY = Math.sin(angle) * velocity;
+            
+            // Анимация полета через Web Animations API
+            const animation = particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${destinationX}px, ${destinationY}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 600 + 600, // Время жизни частицы
+                easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+    }
+
     const player = document.getElementById('core-player');
     let currentTrack = 0;
 
-    function handleSphereClick(index) {
+    function handleSphereClick(index, event) {
+        // Убираем подсказку-пульсацию с первой сферы при клике
+        if(index === 1) {
+            const firstSphere = document.querySelector('.sphere');
+            if(firstSphere) firstSphere.classList.remove('pulse-hint');
+        }
+
+        // Вычисляем координаты центра сферы для взрыва
+        const rect = event.target.getBoundingClientRect();
+        const centerX = rect.left + window.scrollX + rect.width / 2;
+        const centerY = rect.top + window.scrollY + rect.height / 2;
+        
+        // Триггерим взрыв частиц
+        explodeParticles(centerX, centerY, index === 7);
+
         if (currentTrack === index) {
             if (player.paused) {
                 player.play();
@@ -207,19 +337,13 @@
         document.querySelectorAll('.progress-path').forEach(p => p.style.strokeDashoffset = '1000');
 
         const currentStep = document.querySelector(`.step[data-index="${index}"]`);
-        if (currentStep) currentStep.classList.add('active');
+        if (currentStep) {
+            currentStep.classList.add('active');
+            currentStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
 
         player.src = `audio/track${index}.mp3`;
         player.play();
-
-        if (index === 7) {
-            document.body.classList.add('final-active');
-        } else {
-            document.body.classList.remove('final-active');
-        }
-
-        const target = currentStep || document.querySelector('.step:last-child');
-        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     player.ontimeupdate = function() {
@@ -233,11 +357,8 @@
     };
 
     player.onended = function() {
-        if (currentTrack < 7) {
-            startPlay(currentTrack + 1);
-        }
+        if (currentTrack < 7) startPlay(currentTrack + 1);
     };
 </script>
-
 </body>
 </html>
